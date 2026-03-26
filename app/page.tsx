@@ -1,16 +1,15 @@
+import { readFileSync } from "fs";
+import { join } from "path";
 import { CompetitiveAnalysis } from "./types";
 import Dashboard from "./components/Dashboard";
 
-async function getData(): Promise<CompetitiveAnalysis> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/data/trade_desk/competitive_analysis.json`,
-    { cache: "no-store" }
-  );
-  if (!res.ok) throw new Error("Failed to load data");
-  return res.json();
+function getData(): CompetitiveAnalysis {
+  const filePath = join(process.cwd(), "public/data/trade_desk/competitive_analysis.json");
+  const raw = readFileSync(filePath, "utf-8");
+  return JSON.parse(raw);
 }
 
-export default async function Home() {
-  const data = await getData();
+export default function Home() {
+  const data = getData();
   return <Dashboard data={data} />;
 }
